@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Zoner</title>
+<link rel="icon" href="./images/favicon.png" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<link href="./style/style.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<body>
+<div id="container">
+<header id="header">
+
+<ul>
+<li><a href="./index.html">Project Proposal</a></li>
+<li><a href="./references.html">References</a></li>
+<li><a href="./about.html">Group 3 Members</a></li>
+</ul>
+<!-- -->
+<!-- + [RSS](./feed.xml) -->
+<hr>
+</header>
+<article id="content">
+<h2>Comprehensive Automatic Labeling and Diagnosis of 12-lead ECG signals (Automatic multilabel electrocardiogram (ECG) diagnosis of cardiac abnormalities/arrhythmias using machine learning)</h2>
+<img style="max-width: 308px; max-height: 308px;" src="./images/ecg.png" alt="ECG">
+<p><strong>Dataset Link:</strong> <a href="https://physionet.org/content/ecg-arrhythmia/1.0.0/WFDBRecords/01/010/#files-panel"><strong>https://physionet.org/content/ecg-arrhythmia/1.0.0/WFDBRecords/01/010/#files-panel</strong></a></p>
+<h4>Introduction/Background/Problem Definition</h4>
+<p>An electrocardiogram (ECG) uses 12 leads to measure body surface voltages, aiding physicians in diagnosing heart diseases and arrhythmias. <a href="https://sciwheel.com/work/citation?ids=16068880&amp;pre=&amp;suf=&amp;sa=0">(Rautaharju 2016)</a> Since the 1970s, deterministic computer programs have helped with ECG analysis, but recent advancements in machine learning, especially deep learning <a href="https://sciwheel.com/work/citation?ids=16005137,6975935,16069591,9784820&amp;pre=&amp;pre=&amp;pre=&amp;pre=&amp;suf=&amp;suf=&amp;suf=&amp;suf=&amp;sa=0,0,0,0">(Kamaleswaran et al. 2018; Faust et al. 2018; Sannino and De Pietro 2018; Attia et al. 2019)</a> offer superior accuracy. <a href="https://sciwheel.com/work/citation?ids=16065330&amp;pre=&amp;suf=&amp;sa=0">(Shaik et al. 2023)</a> For example, a recent model achieved an F1 score of 99.99% for heartbeat abnormality classification <a href="https://sciwheel.com/work/citation?ids=16080210&amp;pre=&amp;suf=&amp;sa=0">(Darmawahyuni et al. 2022)</a></p>
+<p>Despite these advances, clinical adoption of these mostly black-box models remains limited. <a href="https://sciwheel.com/work/citation?ids=16079251,16080007&amp;pre=&amp;pre=&amp;suf=&amp;suf=&amp;sa=0,0">(Khurshid 2023; Sau and Ng 2023)</a> To increase acceptance by physicians, classification models of heart conditions are needed that are explainable (perhaps through a saliency map) and that give well-calibrated probabilistic classifications. Sophisticated models have been known to flounder in production. <a href="https://sciwheel.com/work/citation?ids=16082626&amp;pre=&amp;suf=&amp;sa=0">(Kaur et al. 2024)</a> To earn the trust of physicians, the uncertainty of models must be addressed. <a href="https://sciwheel.com/work/citation?ids=16065493&amp;pre=&amp;suf=&amp;sa=0">(Feng et al. 2021)</a> To our knowledge, machine learning-based interpretations of ECGs today fail to inform physicians of the uncertainty in their predictions. Doctors need more than a label. They need to know if they can trust it.</p>
+<p>To meet these objectives, we obtained an open-access de-identified dataset of 45,152 patients of 12-lead ECG signals from PhysioNet. <a href="https://sciwheel.com/work/citation?ids=435317,16064876,8337202&amp;pre=&amp;pre=&amp;pre=&amp;suf=&amp;suf=&amp;suf=&amp;sa=0,0,0">(Goldberger et al. 2000; Zheng et al. 2022; Zheng et al. 2020)</a> The patients come from two hospitals in China. Each ECG is accompanied by header information on the patient’s sex, age, prescriptions, medical history, and prior surgeries. Importantly, each ECG is expertly labeled using SNOMED CT codes for 63 heart conditions.</p>
+<h4>Methods</h4>
+<p>To maximize the utility of our model in real-world clinical situations, we will perform multi-label probabilistic classification using the expert labels as our training guide.</p>
+<p><strong><em>Data Preprocessing</em></strong></p>
+<ul>
+<li>Pan-Tompkins algorithm (to extract the QRS complexes in the ECGs)</li>
+<li>Fourier transforms (to extract waveform features such as amplitude &amp; phase)</li>
+<li>PCA (for denoising if needed)</li>
+<li>We have identified the tslearn python library as a critical resource for our ML algorithms. We also plan on using the Time Series Feature Extraction Library (TSFEL) to obtain features for our methods that require them</li>
+</ul>
+<p><strong><em>Unsupervised ML Methods</em></strong></p>
+<ul>
+<li>We will take the expert labels and other clinical data and cluster them to identify interesting clusters of diagnoses. We will use Gower’s distance metric <a href="https://sciwheel.com/work/citation?ids=2867571&amp;pre=&amp;suf=&amp;sa=0">(Gower 1971)</a> and DBSCAN. <a href="https://sciwheel.com/work/citation?ids=16094015&amp;pre=&amp;suf=&amp;sa=0">(Ester et al. 1996)</a></li>
+<li>Market basket analysis</li>
+<li>Cluster ECGs using Dynamic Time Warping metric. This will help to verify supervised learning results.</li>
+<li>We intend to use GMM soft clustering to visually validate the diagnosis labels in the dataset, and remove data with low continuity with the provided labels.</li>
+</ul>
+<p><strong><em>Supervised ML Methods</em></strong></p>
+<p>The probabilistic classifications produced by our supervised models will be calibrated <a href="https://sciwheel.com/work/citation?ids=16065493&amp;pre=&amp;suf=&amp;sa=0">(Feng et al. 2021)</a> using the validation set. Cutoffs will be set at 50% to calculate mean average precision <a href="https://sciwheel.com/work/citation?ids=16094722&amp;pre=&amp;suf=&amp;sa=0">(Beitzel et al. 2009)</a> of our models.</p>
+<ul>
+<li>We intend to experiment with both convolutional &amp; recurrent ANNs (possibly with LSTM) for ECG diagnosis label prediction. We are considering TimesNet <a href="https://sciwheel.com/work/citation?ids=16065881&amp;pre=&amp;suf=&amp;sa=0">(Wu et al. 2022)</a> for the forecasting. One review <a href="https://sciwheel.com/work/citation?ids=11626744&amp;pre=&amp;suf=&amp;sa=0">(Hong et al. 2020)</a> published in 2020 found that using an ensemble approach with a CNN and an RNN worked effectively.</li>
+</ul>
+<h4>Results &amp; Discussion</h4>
+<ul>
+<li>Unsupervised clustering will be evaluated using
+<ul>
+<li>silhouette coefficient <a href="https://sciwheel.com/work/citation?ids=2681601&amp;pre=&amp;suf=&amp;sa=0">(Rousseeuw 1987)</a></li>
+<li>Dunn index <a href="https://sciwheel.com/work/citation?ids=5249512&amp;pre=&amp;suf=&amp;sa=0">(Dunn 1974)</a></li>
+<li>Davies-Bouldin index <a href="https://sciwheel.com/work/citation?ids=1785245&amp;pre=&amp;suf=&amp;sa=0">(Davies and Bouldin 1979)</a></li>
+</ul>
+</li>
+</ul>
+<p>Our supervised methods will yield posterior probabilities for each label.</p>
+<p>In the end, we hope that our experiments will identify the optimal pipeline for automatic ECG labeling.</p>
+<ul>
+<li>Thresholds</li>
+<li>Empirical probs vs. experiment probs</li>
+<li>F1 scores/ standard metrics</li>
+</ul>
+<h4>Gantt Chart &amp; Contributions</h4>
+<img style="max-width: 1008px; max-height: 608px;" src="./images/contribution_table.png" alt="contributions">
+<h4>References</h4>
+<p>[5] R. Kamaleswaran, R. Mahajan, O. Akbilgic, &quot;A robust deep convolutional neural network for the classification of abnormal cardiac rhythm using single lead electrocardiograms of variable length,&quot; Physiol. Meas., vol. [Volume], Article no. 39035006, 2018.</p>
+<p>[6] O. Faust, Y. Hagiwara, T. J. Hong, O. S. Lih, and U. R. Acharya, &quot;Deep learning for healthcare applications based on physiological signals: a review,&quot; Comput. Methods Programs Biomed., vol. 161, pp. 1-13, 2018.</p>
+<p>[7] G. Sannino and G. De Pietro, &quot;A deep learning approach for ECG-based heartbeat classification for arrhythmia detection,&quot; Future Gener. Comput. Syst., vol. 86, pp. 446-455, 2018.</p>
+<p>[8] Z. I. Attia, S. Kapa, X. Yao, et al., &quot;Prospective validation of a deep learning electrocardiogram algorithm for the detection of left ventricular systolic dysfunction,&quot; J. Cardiovasc. Electrophysiol., vol. 30, pp. 668-674, 2019.</p>
+<p>[9] C. Zhang, G. Wang, J. Zhao, P. Gao, J. Lin, and H. Yang, &quot;Patient-specific ECG classification based on recurrent neural networks and clustering technique,&quot; presented at the IASTED International Conference on Biomedical Engineering, Innsbruck, Austria, Feb. 20–21, 2017, abstr 63–67.</p>
+<p>[10] P. Schwab, G. C. Scebba, J. Zhang, M. Delai, and W. Karlen, &quot;Beat by beat: classifying cardiac arrhythmias with recurrent neural networks,&quot; Comput. Cardiol., vol. 44, Article no. 1-4, 2017.</p>
+<p>[11] Z. I. Attia, P. A. Noseworthy, F. Lopez-Jimenez, et al., &quot;An artificial intelligence-enabled ECG algorithm for the identification of patients with atrial fibrillation during sinus rhythm: a retrospective analysis of outcome prediction,&quot; Lancet, vol. 394, pp. 861-867, 2019.</p>
+<p>[12] Ö. Yıldırım, P. Pławiak, R.-S. Tan, and U. R. Acharya, &quot;Arrhythmia detection using deep convolutional neural network with long duration ECG signals,&quot; Comput. Biol. Med., vol. 102, pp. 411-420, 2018.</p>
+<p>[13] Ö. Yıldırım, &quot;A novel wavelet sequence based on deep bidirectional LSTM network model for ECG signal classification,&quot; Comput. Biol. Med., vol. 96, pp. 189-202, 2018.</p>
+<p>[14] A. Mincholé, J. Camps, A. Lyon, and B. Rodríguez, &quot;Machine learning in the electrocardiogram,&quot; J. Electrocardiol., vol. 57S, pp. S61-S64, 2019.</p>
+<p>[15] Physionet. [Online]. Available: <a href="https://physionet.org/content/ecg-arrhythmia/1.0.0/">https://physionet.org/content/ecg-arrhythmia/1.0.0/</a></p>
+<p>[16] Raj S, Ray KC. Sparse Representation of ECG Signals for Automated Recognition of Cardiac Arrhythmias. Expert Systems with Applications 2018;105:49–64</p>
+<p>[17] Yang W, Si Y, Wang D, Guo B. Automatic Recognition of Arrhythmia Based on Principal Component Analysis Network and Linear Support Vector Machine. Computers in Biology and Medicine 2018;101:22–32.</p>
+<p>[18] Hannun AY, Rajpurkar P, Haghpanahi M, Tison GH, Bourn C, Turakhia MP, Ng AY. Cardiologist-level Arrhythmia Detection and Classification in Ambulatory Electrocardiograms Using a Deep Neural Network. Nature Medicine 2019;25(1):65.</p>
+<p>[19] Hasani, H., Bitarafan, A., &amp; Baghshah, M. S. (2020, September). Classification of 12-lead ECG signals with adversarial multi-source domain generalization. In <em>2020 Computing in Cardiology</em> (pp. 1-4). IEEE.</p>
+<p>[20] Ribeiro, A. H., Ribeiro, M. H., Paixão, G. M., Oliveira, D. M., Gomes, P. R., Canazart, J. A., ... &amp; Ribeiro, A. L. P. (2020). Automatic diagnosis of the 12-lead ECG using a deep neural network. <em>Nature communications</em>, <em>11</em>(1), 1760.</p>
+<p>[21] Singh, A.K., Krishnan, S. ECG signal feature extraction trends in methods and applications. BioMed Eng OnLine 22, 22 (2023). <a href="https://doi.org/10.1186/s12938-023-01075-1">https://doi.org/10.1186/s12938-023-01075-1</a></p>
+<p>[22] Hari Mohan Rai, Anurag Trivedi, Shailja Shukla,ECG signal processing for abnormalities detection using multi-resolution wavelet transform and Artificial Neural Network classifier, Measurement, Volume 46, Issue 9, 2013, Pages 3238-3246, ISSN 0263-2241, <a href="https://doi.org/10.1016/j.measurement.2013.05.021">https://doi.org/10.1016/j.measurement.2013.05.021</a>.</p>
+</article>
+<footer id="footer">
+<hr>
+<p><small>Thanks for visiting</small></p>
+</footer>
+</div>
+</body>
+</html>
